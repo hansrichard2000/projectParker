@@ -1,4 +1,4 @@
-from pyfirmata import Arduino, util
+from pyfirmata import Arduino, util, SERVO
 import pyfirmata
 import time
 import pyrebase
@@ -54,36 +54,13 @@ LED3 = board.get_pin('d:10:o')
 LED4 = board.get_pin('d:9:o')
 LDR = board.get_pin('a:3:i')
 
-apply = True
-
 it = pyfirmata.util.Iterator(board)
 it.start()
 
-while True:
-    time.sleep(0.5)
-    park1 = IR.read()
-    park2 = IR3.read()
-    park3 = IR4.read()
-    gate1 = IR2.read()
-    lightVal = LDR.read()
-    if park1 and park2 and park3 and gate1 and lightVal == None:
-        print("park1:", park1)
-        print("park2:", park2)
-        print("park3:", park3)
-        print("ldr:", lightVal)
-    else:
-        print("park1:", park1)
-        print("park2:", park2)
-        print("park3:", park3)
-        print("ldr:", lightVal)
-
-        parking1(park1)
-
-        parking2(park2)
-        
-        parking3(park3)
-        
-        bulb(lightVal)
+def rotateGate(pin, angle):
+    board.digital[pin].mode = SERVO
+    board.digital[pin].write(angle)
+    time.sleep(0.015)
 
 def parking1(park1):
     if park1 == True:
@@ -109,16 +86,49 @@ def parking3(park3):
     else:
         print("Error")
 
-def bulb(lightVal):
-    if lightVal > 0.15:
-        print("ldr: Wow", lightVal)
-        board.digital[bulb].write(0)
-        db.child("LDR").child("status").set("off")
+while True:
+    time.sleep(0.5)
+    park1 = IR.read()
+    park2 = IR3.read()
+    park3 = IR4.read()
+    gate1 = IR2.read()
+    gate2 = IR5.read()
+    lightVal = LDR.read()
+    if park1 and park2 and park3 and gate1 and gate2 and lightVal == None:
+        print("park1:", park1)
+        print("park2:", park2)
+        print("park3:", park3)
+        print("ldr:", lightVal)
+        print("gate1:", gate1)
+        print("gate2:", gate2)
     else:
-        print("ldr: tinggi", lightVal)
-        board.digital[bulb].write(1)
-        db.child("LDR").child("status").set("on")
-        
+        print("park1:", park1)
+        print("park2:", park2)
+        print("park3:", park3)
+        print("ldr:", lightVal)
+        print("gate2:", gate2)
 
+        parking1(park1)
 
+        parking2(park2)
         
+        parking3(park3)
+
+        if gate1 == False:
+            rotateGate(servo, 20)
+        else:
+            rotateGate(servo, 117)
+        
+        if gate2 == False:
+            rotateGate(servo, 20)
+        else:
+            rotateGate(servo, 117)
+                
+        if lightVal > 0.15:
+            print("ldr: Wow", lightVal)
+            board.digital[bulb].write(0)
+            db.child("LDR").child("status").set("off")
+        else:
+            print("ldr: tinggi", lightVal)
+            board.digital[bulb].write(1)
+            db.child("LDR").child("status").set("on")
