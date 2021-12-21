@@ -1,4 +1,4 @@
-from pyfirmata import Arduino, util, SERVO
+from pyfirmata import Arduino, util, SERVO, STRING_DATA
 import pyfirmata
 import time
 import pyrebase
@@ -22,6 +22,10 @@ db = firebase.database()
 
 port = "COM3"
 board = Arduino(port)
+
+def msg( text ):
+    if text:
+        board.send_sysex( STRING_DATA, util.str_to_two_byte_iter( text ) )
 # Servo myservo;
 # const int in = 7;
 # const int out = 6;
@@ -106,6 +110,7 @@ while True:
         print("park2:", park2)
         print("park3:", park3)
         print("ldr:", lightVal)
+        print("gate1:", gate1)
         print("gate2:", gate2)
 
         parking1(park1)
@@ -114,15 +119,18 @@ while True:
         
         parking3(park3)
 
-        if gate1 == False:
+        if gate1 == False and gate2 == False:
             rotateGate(servo, 20)
+            msg("Open")
+        elif gate1 == False and gate2 == True:
+            rotateGate(servo, 20)
+            msg("Open")
+        elif gate2 == False and gate1 == True:
+            rotateGate(servo, 20)
+            msg("Open")
         else:
             rotateGate(servo, 117)
-        
-        if gate2 == False:
-            rotateGate(servo, 20)
-        else:
-            rotateGate(servo, 117)
+            msg("Close")
                 
         if lightVal > 0.15:
             print("ldr: Wow", lightVal)
