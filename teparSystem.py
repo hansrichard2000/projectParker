@@ -52,10 +52,6 @@ IR2 = board.get_pin('d:2:i')
 IR3 = board.get_pin('d:4:i')
 IR4 = board.get_pin('d:5:i')
 IR5 = board.get_pin('d:6:i')
-LED = board.get_pin('d:12:o')
-LED2 = board.get_pin('d:11:o')
-LED3 = board.get_pin('d:10:o')
-LED4 = board.get_pin('d:9:o')
 LDR = board.get_pin('a:3:i')
 
 it = pyfirmata.util.Iterator(board)
@@ -118,7 +114,7 @@ while True:
         parking2(park2)
         
         parking3(park3)
-
+        
         if gate1 == False and gate2 == False:
             rotateGate(servo, 20)
             msg("Open")
@@ -128,11 +124,14 @@ while True:
         elif gate2 == False and gate1 == True:
             rotateGate(servo, 20)
             msg("Open")
+        elif gate1 == True and gate2 == True:
+            rotateGate(servo, 117)
+            msg("Close")
         else:
             rotateGate(servo, 117)
             msg("Close")
                 
-        if lightVal > 0.15:
+        if lightVal > 0.04:
             print("ldr: Wow", lightVal)
             board.digital[bulb].write(0)
             db.child("LDR").child("status").set("off")
