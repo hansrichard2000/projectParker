@@ -795,7 +795,7 @@ void setup()
   lcd.backlight();
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.println("Tepar");
+  lcd.println("PARKER");
   lcd.setCursor(0, 1);
   lcd.print("P-L:");
   Firmata.setFirmwareVersion(FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
