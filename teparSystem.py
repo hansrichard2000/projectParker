@@ -23,9 +23,9 @@ db = firebase.database()
 port = "COM3"
 board = Arduino(port)
 
-def msg( text ):
-    if text:
-        board.send_sysex( STRING_DATA, util.str_to_two_byte_iter( text ) )
+# def msg( text ):
+#     if text:
+#         board.send_sysex( STRING_DATA, util.str_to_two_byte_iter( text ) )
 # Servo myservo;
 # const int in = 7;
 # const int out = 6;
@@ -47,6 +47,7 @@ def msg( text ):
 # bool apply = true;
 bulb = 13
 servo = 8
+board.digital[servo].mode = SERVO
 IR = board.get_pin('d:3:i')
 IR2 = board.get_pin('d:2:i')
 IR3 = board.get_pin('d:4:i')
@@ -58,7 +59,6 @@ it = pyfirmata.util.Iterator(board)
 it.start()
 
 def rotateGate(pin, angle):
-    board.digital[pin].mode = SERVO
     board.digital[pin].write(angle)
     time.sleep(0.015)
 
@@ -117,19 +117,19 @@ while True:
         
         if gate1 == False and gate2 == False:
             rotateGate(servo, 20)
-            msg("Open")
+            # msg("Open")
         elif gate1 == False and gate2 == True:
             rotateGate(servo, 20)
-            msg("Open")
+            # msg("Open")
         elif gate2 == False and gate1 == True:
             rotateGate(servo, 20)
-            msg("Open")
+            # msg("Open")
         elif gate1 == True and gate2 == True:
             rotateGate(servo, 117)
-            msg("Close")
+            # msg("Close")
         else:
             rotateGate(servo, 117)
-            msg("Close")
+            # msg("Close")
                 
         if lightVal > 0.04:
             print("ldr: Wow", lightVal)
